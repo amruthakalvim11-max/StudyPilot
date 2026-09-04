@@ -24,5 +24,8 @@ Instead of relying on fragile string parsing, we configure the `responseMimeType
 - An aggressive Rate Limiter (20 requests per 15 minutes per user) is enforced via Redis on the AI routes.
 - Zod is used to validate the incoming user prompt to ensure it is not too short or excessively long (max 2000 characters).
 
-## 7. Testing & Mocking
-To execute automated test pipelines securely and cost-effectively, `ai.service.js` supports a `useMock` flag. When triggered (via `X-Test-Mock-AI` header), the service bypasses the network call to Google and returns a static JSON payload matching the expected output schema. This allows us to test our authentication, rate limiting, and Zod validation layers independently of the LLM provider.
+## 7. RAG & Embeddings Pipeline (Phase 3B - Ingestion)
+- **Model**: `text-embedding-004` (Google Gemini) via `@google/genai`.
+- **Chunking**: Text is chunked with `CHUNK_SIZE = 1000` and `CHUNK_OVERLAP = 200`.
+- **PGVector Status**: The system currently runs `postgresql@16` locally which blocked the installation of the `pgvector` extension. The pipeline securely extracts text and generates embeddings, but **semantic retrieval is currently blocked**.
+- **Mocking**: Embeddings can be fully mocked via the `X-Test-Mock-AI: true` header to save API costs during test execution.

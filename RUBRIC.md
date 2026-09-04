@@ -7,6 +7,7 @@ This document maps the project rubric requirements to their specific implementat
 | **LLM API integration** | [PASS] Call LLM API using environment variables | `backend/src/services/ai.service.js` | Show the API call in code and AI responses in UI |
 | **Prompt engineering** | [PASS] Construct engineered prompts for Tutor and Planner | `backend/src/services/ai.service.js` | Show the prompt templates in code |
 | **Structured outputs** | [PASS] Request JSON format from LLM and parse | `backend/src/services/ai.service.js` | Show the JSON schema in prompt and the parsed result |
+| **File upload handling** | [PASS] Store files via `multer` securely, validate MIME type and 10MB limit | `backend/src/routes/material.routes.js` | Show the upload test or code |
 | **HTTP status codes used correctly** | [PASS] Return 200, 201, 400, 401, 403, 404, 409, 429, 500 | `backend/src/controllers/auth.controller.js` | Automated API tests output |
 | **Middleware** | [PASS] Zod validation, JWT verification, RBAC | `backend/src/middleware/authMiddleware.js`, `errorHandler.js` | Send invalid POST request to trigger 400 or missing token for 401 |
 | **Problem modeling** | [PASS] ERD design and DB documentation | `docs/DATABASE_DESIGN.md` | Show documentation |

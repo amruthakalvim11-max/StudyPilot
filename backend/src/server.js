@@ -12,6 +12,7 @@ const assignmentRoutes = require('./routes/assignment.routes');
 const taskRoutes = require('./routes/task.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const aiRoutes = require('./routes/ai.routes');
+const materialRoutes = require('./routes/material.routes');
 
 // Middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -40,6 +41,7 @@ app.use('/api/courses', authMiddleware, courseRoutes);
 app.use('/api/assignments', authMiddleware, assignmentRoutes);
 app.use('/api/tasks', authMiddleware, taskRoutes);
 app.use('/api/dashboard', authMiddleware, dashboardRoutes);
+app.use('/api/materials', authMiddleware, materialRoutes);
 
 // Error Handler (must be last)
 app.use(errorHandler);

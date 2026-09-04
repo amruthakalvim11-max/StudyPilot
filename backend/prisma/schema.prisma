@@ -45,6 +45,7 @@ model User {
 
   courses      Course[]
   tasks        Task[]
+  materials    StudyMaterial[]
 }
 
 model Course {
@@ -96,4 +97,41 @@ model Task {
   @@index([status])
   @@index([priority])
   @@index([dueDate])
+}
+
+enum ProcessingStatus {
+  PROCESSING
+  READY
+  FAILED
+}
+
+model StudyMaterial {
+  id               String           @id @default(uuid())
+  userId           String
+  originalFilename String
+  sanitizedFilename String
+  fileType         String
+  fileSize         Int
+  processingStatus ProcessingStatus @default(PROCESSING)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chunks           DocumentChunk[]
+
+  @@index([userId])
+}
+
+model DocumentChunk {
+  id         String        @id @default(uuid())
+  materialId String
+  chunkIndex Int
+  text       String
+  page       Int?
+  createdAt  DateTime      @default(now())
+  // NOTE: Embedding vector field intentionally omitted due to pgvector blocker.
+
+  material   StudyMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@index([materialId])
 }
