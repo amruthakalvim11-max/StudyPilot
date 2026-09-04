@@ -28,3 +28,4 @@ The application follows a modern, decoupled client-server architecture.
 - **AI Tutor:** An interactive chat interface to ask academic questions, receiving structured, easy-to-understand explanations with examples and quizzes.
 - **AI Study Planner:** Generates customized study schedules based on user availability, exam dates, and current skill levels.
 - **Conversation History:** Persisted AI conversations for future reference.
+# StudyPilot
