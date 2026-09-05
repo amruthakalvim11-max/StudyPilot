@@ -1,11 +1,17 @@
 const prisma = require('../config/prisma');
+const cacheService = require('../services/cache.service');
 
 exports.getCourses = async (req, res, next) => {
   try {
-    const courses = await prisma.course.findMany({
-      where: { userId: req.user.id }, // Ownership check
-      orderBy: { createdAt: 'desc' }
+    const cacheKey = cacheService.generateUserKey('courses', req.user.id);
+    
+    const courses = await cacheService.cacheAside(cacheKey, 60, async () => {
+      return await prisma.course.findMany({
+        where: { userId: req.user.id }, // Ownership check
+        orderBy: { createdAt: 'desc' }
+      });
     });
+    
     res.json({ success: true, data: courses });
   } catch (error) {
     next(error);
@@ -36,6 +42,10 @@ exports.createCourse = async (req, res, next) => {
     const course = await prisma.course.create({
       data: { name, description, userId: req.user.id } // Force userId from JWT
     });
+    
+    // Invalidate Cache
+    await cacheService.delete(cacheService.generateUserKey('courses', req.user.id));
+    
     res.status(201).json({ success: true, data: course });
   } catch (error) {
     next(error);
@@ -57,6 +67,10 @@ exports.updateCourse = async (req, res, next) => {
       where: { id },
       data: { name, description }
     });
+    
+    // Invalidate Cache
+    await cacheService.delete(cacheService.generateUserKey('courses', req.user.id));
+    
     res.json({ success: true, data: course });
   } catch (error) {
     next(error);
@@ -74,6 +88,10 @@ exports.deleteCourse = async (req, res, next) => {
     }
 
     await prisma.course.delete({ where: { id } });
+    
+    // Invalidate Cache
+    await cacheService.delete(cacheService.generateUserKey('courses', req.user.id));
+    
     res.json({ success: true, data: { message: 'Course deleted successfully' } });
   } catch (error) {
     next(error);

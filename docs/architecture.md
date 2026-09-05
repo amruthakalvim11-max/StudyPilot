@@ -10,13 +10,15 @@ StudyPilot adopts a modern, decoupled 3-tier architecture with a polyglot persis
 
 ## 2. Application Layer (Backend)
 - **Runtime & Framework:** Node.js with Express.
-- **Architecture Pattern:** MVC-inspired (Routes -> Controllers -> Services).
-  - **Routes:** Define the API endpoints and map them to controllers.
-  - **Controllers:** Handle HTTP requests, extract parameters, and return HTTP responses (status codes & JSON).
-  - **Services:** Contain the core business logic, database interactions, and external API calls.
-- **Middleware:** 
-  - `authMiddleware`: Verifies JWT tokens.
-  - `validationMiddleware`: Validates incoming request payloads.
+- **Architecture Pattern:** The StudyPilot backend follows a standard monolithic Node.js/Express architecture with a focus on separation of concerns.
+
+## Core Components
+
+1.  **Controllers (`src/controllers/`)**: Handle incoming HTTP requests, input validation, and send responses. They act as the entry point for API routes.
+2.  **Services (`src/services/`)**: Contain the core business logic. Controllers delegate complex operations to services (e.g., `ai.service.js`, `rag.service.js`, `cache.service.js`).
+3.  **Data Access (`src/config/prisma.js`)**: Prisma ORM is used to interact with the PostgreSQL database.
+4.  **Security (`src/middleware/`)**: Middlewares handle JWT authentication (`authMiddleware.js`), request validation (`validateRequest.js`), and rate limiting.
+5.  **Caching (`src/services/cache.service.js`)**: Redis is employed in a Cache-Aside pattern to reduce PostgreSQL load for high-traffic read operations (see [REDIS_CACHING.md](./REDIS_CACHING.md)).
   - `errorHandlerMiddleware`: Centralized error catching to ensure consistent error response formats.
   - `loggerMiddleware`: Logs incoming requests for debugging.
 

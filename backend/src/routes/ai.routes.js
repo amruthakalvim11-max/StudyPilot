@@ -6,35 +6,29 @@ const authMiddleware = require('../middleware/authMiddleware');
 const { aiAskSchema } = require('../validators/schemas');
 const { rateLimit, MemoryStore } = require('express-rate-limit');
 const RedisStore = require('rate-limit-redis').default;
-const { default: Redis } = require('ioredis');
+const { redisClient, isRedisConnected } = require('../config/redis');
 
-// Setup Redis client for Rate Limiting (Graceful Fallback)
-const redisClient = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-  maxRetriesPerRequest: 1,
-  retryStrategy: (times) => {
-    if (times > 1) return null;
-    return Math.min(times * 50, 2000);
-  }
-});
 let store = new MemoryStore();
-let isRedisConnected = false;
+let limiterOptions = null;
 
+// Watch the shared redisClient for changes via a listener or just rely on it when initializing
 redisClient.on('connect', () => {
-  isRedisConnected = true;
   store = new RedisStore({ sendCommand: (...args) => redisClient.call(...args) });
+  if (limiterOptions && store.init) store.init(limiterOptions);
 });
 redisClient.on('error', () => {
-  isRedisConnected = false;
-  store = new MemoryStore();
+  store = new MemoryStore(); // Fallback to memory
+  if (limiterOptions && store.init) store.init(limiterOptions);
 });
 
 const aiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // Strict limit: 20 AI queries per 15 mins per user
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   store: {
-     init: (options) => store.init && store.init(options),
+     // Forward commands to the active store (Redis or Memory)
+     init: (options) => { limiterOptions = options; if (store.init) store.init(options); },
      increment: (key) => store.increment(key),
      decrement: (key) => store.decrement(key),
      resetKey: (key) => store.resetKey(key),
