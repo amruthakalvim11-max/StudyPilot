@@ -50,4 +50,7 @@ router.use(authMiddleware);
 // POST /api/ai/ask
 router.post('/ask', aiLimiter, validateRequest(aiAskSchema), aiController.askAi);
 
+// POST /api/ai/ask/stream
+router.post('/ask/stream', aiLimiter, validateRequest(aiAskSchema), aiController.askAiStream);
+
 module.exports = router;

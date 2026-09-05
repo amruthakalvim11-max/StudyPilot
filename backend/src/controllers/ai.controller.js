@@ -38,3 +38,46 @@ exports.askAi = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.askAiStream = async (req, res, next) => {
+  try {
+    const { prompt, materialIds } = req.body;
+    const isMock = req.headers['x-test-mock-ai'] === 'true';
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { name: true, role: true }
+    });
+
+    let contextChunks = [];
+    if (materialIds && materialIds.length > 0) {
+      contextChunks = await ragService.retrieveRelevantChunks({
+        userId: req.user.id,
+        query: prompt,
+        materialIds,
+        useMock: isMock
+      });
+    }
+
+    // Set up SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders(); // Establish connection immediately
+
+    // Delegate to ai.service.js to handle the stream piping
+    await aiService.streamTutor(prompt, user, contextChunks, res, isMock);
+
+  } catch (error) {
+    if (!res.headersSent) {
+      if (error.message.includes('Failed to generate AI response')) {
+        return res.status(502).json({ success: false, error: { code: 'BAD_GATEWAY', message: 'The AI provider is currently unavailable.' } });
+      }
+      next(error);
+    } else {
+      // If headers are already sent, stream the error safely
+      res.write(`event: error\ndata: ${JSON.stringify({ error: 'An unexpected error occurred during generation.' })}\n\n`);
+      res.end();
+    }
+  }
+};

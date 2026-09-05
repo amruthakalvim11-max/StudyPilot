@@ -57,4 +57,11 @@ export const createTask = (data) => api.post('/tasks', data);
 export const updateTask = (id, data) => api.patch(`/tasks/${id}`, data);
 export const deleteTask = (id) => api.delete(`/tasks/${id}`);
 
+// AI Tutor
+export const askTutor = (data) => api.post('/ai/ask', data);
+
+// Helper for native Fetch SSE
+export const getStreamingAiTutorUrl = () => `${API_URL}/ai/ask/stream`;
+export const getAuthToken = () => localStorage.getItem('token');
+
 export default api;

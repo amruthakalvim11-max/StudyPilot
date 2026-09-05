@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { LayoutDashboard, BookOpen, ClipboardList, CheckSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, BookOpen, ClipboardList, CheckSquare, LogOut, Bot } from 'lucide-react';
 
 const Sidebar = () => {
   const { logout } = useContext(AuthContext);
@@ -12,6 +12,7 @@ const Sidebar = () => {
     { name: 'Courses', path: '/courses', icon: <BookOpen size={20} /> },
     { name: 'Assignments', path: '/assignments', icon: <ClipboardList size={20} /> },
     { name: 'Tasks', path: '/tasks', icon: <CheckSquare size={20} /> },
+    { name: 'AI Tutor', path: '/ai-tutor', icon: <Bot size={20} /> },
   ];
 
   return (

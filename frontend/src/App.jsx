@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import Assignments from './pages/Assignments';
 import Tasks from './pages/Tasks';
+import AITutor from './pages/AITutor';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/courses" element={<ProtectedRoute><AppLayout><Courses /></AppLayout></ProtectedRoute>} />
         <Route path="/assignments" element={<ProtectedRoute><AppLayout><Assignments /></AppLayout></ProtectedRoute>} />
         <Route path="/tasks" element={<ProtectedRoute><AppLayout><Tasks /></AppLayout></ProtectedRoute>} />
+        <Route path="/ai-tutor" element={<ProtectedRoute><AppLayout><AITutor /></AppLayout></ProtectedRoute>} />
         
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

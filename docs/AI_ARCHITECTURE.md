@@ -11,7 +11,11 @@ The `GEMINI_API_KEY` is strictly managed via `.env` files. It is never exposed t
 - The `agent.service.js` orchestrates a bounded multi-step autonomous loop (up to `MAX_AGENT_STEPS=8`) that allows the AI to execute tools sequentially, observe results, and decide the next logical step.
 - Tool arguments are validated securely via Zod, and data isolation is strictly enforced backend-side (ignoring LLM-supplied user IDs).
 
-## 4. Centralized AI Service
+## 4. Streaming Responses (Phase 3E)
+- True Server-Sent Events (SSE) streaming implemented via `POST /api/ai/ask/stream`.
+- Leverages Gemini's `generateContentStream` to yield string chunks progressively while ensuring strict final structured JSON formats via `event: done`.
+
+## 5. Centralized AI Service
 All communication with the LLM routes through a single service file: `backend/src/services/ai.service.js`. 
 This guarantees that:
 - Prompts are strictly controlled and engineered server-side.
