@@ -42,5 +42,7 @@ This document maps the project rubric requirements to their specific implementat
 | **JWT issuance and verification** | [PASS] JWT generated on login, verified by authMiddleware | `backend/src/middleware/authMiddleware.js` | Check token issuance/verification |
 | **OAuth / third-party login** | [PASS] Google OAuth implementation | `backend/src/controllers/auth.controller.js` | Check googleLogin endpoint implementation |
 | **Rate limiting** | [PASS] Redis rate-limiting applied to auth routes | `backend/src/routes/auth.routes.js` | Hit login endpoint 10+ times to trigger 429 |
+| **Function calling / tool use** | [PASS] Centralized tool registry executes secure backend functions with strict isolation and loops up to MAX_TOOL_ROUNDS=5. | `backend/src/tools/index.js` | Run `test_tools.js` |
+| **Multi-step autonomous agent** | Agent can plan and execute multiple dependent steps | | |
 | **Role-based authorization** | [PASS] RBAC middleware implemented | `backend/src/middleware/roleMiddleware.js` | Review requireRole middleware |
 | **Input sanitization and injection awareness** | [PASS] Zod schemas, Prisma param queries | `docs/SECURITY.md` | See SECURITY documentation |

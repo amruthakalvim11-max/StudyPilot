@@ -6,13 +6,18 @@ StudyPilot utilizes **Google Gemini** (`gemini-2.5-flash`) via the official `@go
 ## 2. API Key Management
 The `GEMINI_API_KEY` is strictly managed via `.env` files. It is never exposed to the frontend repository or stored in Git.
 
-## 3. Centralized AI Service
+## 3. Tool Calling / Function Calling (Phase 3C)
+- Tools are centrally registered in `backend/src/tools/index.js`.
+- The AI Service loops up to `MAX_TOOL_ROUNDS=5` to fulfill function calls natively using the `@google/genai` SDK.
+- Tool arguments are validated securely via Zod, and data isolation is strictly enforced backend-side (ignoring LLM-supplied user IDs).
+
+## 4. Centralized AI Service
 All communication with the LLM routes through a single service file: `backend/src/services/ai.service.js`. 
 This guarantees that:
 - Prompts are strictly controlled and engineered server-side.
 - Internal System Instructions cannot be modified or bypassed by a malicious frontend user.
 
-## 4. Prompt Engineering
+## 5. Prompt Engineering
 We employ a **System Instruction** model where the "StudyPilot Tutor" persona is explicitly defined. The system prompt instructs the AI to *never* output raw answers or complete assignments on behalf of the student, but instead provide structured guidance.
 The user's individual context (`name`, `role`) is dynamically injected into each request context so the Tutor can personalize its advice.
 
