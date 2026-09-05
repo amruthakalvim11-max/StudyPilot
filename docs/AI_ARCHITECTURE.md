@@ -6,9 +6,9 @@ StudyPilot utilizes **Google Gemini** (`gemini-2.5-flash`) via the official `@go
 ## 2. API Key Management
 The `GEMINI_API_KEY` is strictly managed via `.env` files. It is never exposed to the frontend repository or stored in Git.
 
-## 3. Tool Calling / Function Calling (Phase 3C)
+## 3. Tool Calling & Multi-Step Agent (Phase 3C & 3D)
 - Tools are centrally registered in `backend/src/tools/index.js`.
-- The AI Service loops up to `MAX_TOOL_ROUNDS=5` to fulfill function calls natively using the `@google/genai` SDK.
+- The `agent.service.js` orchestrates a bounded multi-step autonomous loop (up to `MAX_AGENT_STEPS=8`) that allows the AI to execute tools sequentially, observe results, and decide the next logical step.
 - Tool arguments are validated securely via Zod, and data isolation is strictly enforced backend-side (ignoring LLM-supplied user IDs).
 
 ## 4. Centralized AI Service

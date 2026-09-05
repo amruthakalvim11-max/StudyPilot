@@ -43,6 +43,6 @@ This document maps the project rubric requirements to their specific implementat
 | **OAuth / third-party login** | [PASS] Google OAuth implementation | `backend/src/controllers/auth.controller.js` | Check googleLogin endpoint implementation |
 | **Rate limiting** | [PASS] Redis rate-limiting applied to auth routes | `backend/src/routes/auth.routes.js` | Hit login endpoint 10+ times to trigger 429 |
 | **Function calling / tool use** | [PASS] Centralized tool registry executes secure backend functions with strict isolation and loops up to MAX_TOOL_ROUNDS=5. | `backend/src/tools/index.js` | Run `test_tools.js` |
-| **Multi-step autonomous agent** | Agent can plan and execute multiple dependent steps | | |
+| **Multi-step autonomous agent** | [PASS] Agent securely plans and executes sequential, stateful tool chains up to MAX_AGENT_STEPS=8. | `backend/src/services/agent.service.js` | Run `test_agent.js` |
 | **Role-based authorization** | [PASS] RBAC middleware implemented | `backend/src/middleware/roleMiddleware.js` | Review requireRole middleware |
 | **Input sanitization and injection awareness** | [PASS] Zod schemas, Prisma param queries | `docs/SECURITY.md` | See SECURITY documentation |
