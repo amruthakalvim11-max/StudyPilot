@@ -93,12 +93,19 @@ CRITICAL SECURITY RULES:
     });
 
     let fullJsonStr = '';
+    let finalUsageMetadata = null;
 
     for await (const chunk of responseStream) {
       if (isDisconnected) {
         console.log('[STREAM] Client disconnected, aborting generation.');
         break; // Stop processing if the client leaves early
       }
+      
+      // Capture usage metadata if available (typically in final chunk)
+      if (chunk.usageMetadata) {
+        finalUsageMetadata = chunk.usageMetadata;
+      }
+
       if (chunk.text) {
         fullJsonStr += chunk.text;
         res.write(`event: chunk\ndata: ${JSON.stringify({ text: chunk.text })}\n\n`);
@@ -116,6 +123,16 @@ CRITICAL SECURITY RULES:
         res.write(`event: error\ndata: ${JSON.stringify({ error: 'Failed to format the final response correctly.' })}\n\n`);
       }
     }
+    
+    // Record usage
+    await require('./ai.usage.service').recordUsage({
+      userId: context.id,
+      model: 'gemini-2.5-flash',
+      operation: 'STREAM',
+      usageMetadata: finalUsageMetadata,
+      failed: false
+    }).catch(err => console.error("Failed to record stream usage:", err));
+
     res.end(); // Always end the response cleanly
   } catch (error) {
     console.error('AI Streaming Error:', error);
@@ -125,5 +142,14 @@ CRITICAL SECURITY RULES:
       res.write(`event: error\ndata: ${JSON.stringify({ error: 'An unexpected error occurred during generation.' })}\n\n`);
       res.end();
     }
+    
+    // Attempt to record failure
+    await require('./ai.usage.service').recordUsage({
+      userId: context.id,
+      model: 'gemini-2.5-flash',
+      operation: 'STREAM',
+      usageMetadata: null,
+      failed: true
+    }).catch(err => console.error("Failed to record failed stream usage:", err));
   }
 };

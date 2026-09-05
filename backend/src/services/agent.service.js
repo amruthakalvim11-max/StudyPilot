@@ -120,6 +120,17 @@ exports.runAgent = async (prompt, context, contextChunks = [], useMock = false) 
         }
       });
 
+      // 4B: Record token usage per model call
+      if (response.usageMetadata) {
+        await require('./ai.usage.service').recordUsage({
+          userId: context.id,
+          model: model,
+          operation: 'AGENT',
+          usageMetadata: response.usageMetadata,
+          failed: false
+        }).catch(err => console.error("Failed to record usage:", err));
+      }
+
       if (response.functionCalls && response.functionCalls.length > 0) {
         // Agent decided to use a tool
         contents.push(response.candidates[0].content);
@@ -177,6 +188,16 @@ exports.runAgent = async (prompt, context, contextChunks = [], useMock = false) 
 
     } catch (error) {
       console.error('Agent Service Error in Step Loop:', error);
+      
+      // Attempt to record failure if possible
+      await require('./ai.usage.service').recordUsage({
+        userId: context.id,
+        model: model,
+        operation: 'AGENT',
+        usageMetadata: null,
+        failed: true
+      }).catch(err => console.error("Failed to record failed usage:", err));
+      
       throw new Error('Failed to generate AI response: ' + error.message);
     }
   }

@@ -20,7 +20,12 @@ if (MODE === 'mock') {
           return {
             text: response.text || '{}',
             functionCalls: response.functionCalls,
-            candidates: response.candidates || [{ content: { role: 'model', parts: [{ text: response.text || '{}' }] } }]
+            candidates: response.candidates || [{ content: { role: 'model', parts: [{ text: response.text || '{}' }] } }],
+            usageMetadata: {
+              promptTokenCount: 100,
+              candidatesTokenCount: 50,
+              totalTokenCount: 150
+            }
           };
         }
       };

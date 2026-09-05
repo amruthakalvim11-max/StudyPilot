@@ -53,4 +53,7 @@ router.post('/ask', aiLimiter, validateRequest(aiAskSchema), aiController.askAi)
 // POST /api/ai/ask/stream
 router.post('/ask/stream', aiLimiter, validateRequest(aiAskSchema), aiController.askAiStream);
 
+// Get AI usage metadata and cost estimates
+router.get('/usage', authMiddleware, aiController.getUsage);
+
 module.exports = router;

@@ -48,6 +48,7 @@ model User {
   courses      Course[]
   tasks        Task[]
   materials    StudyMaterial[]
+  aiUsages     AiUsage[]
 }
 
 model Course {
@@ -136,4 +137,41 @@ model DocumentChunk {
   material   StudyMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
 
   @@index([materialId])
+}
+
+enum AiUsageOperation {
+  TUTOR
+  RAG
+  FUNCTION_CALL
+  AGENT
+  STREAM
+}
+
+enum AiUsageStatus {
+  SUCCESS
+  FAILED
+}
+
+model AiUsage {
+  id                  String           @id @default(uuid())
+  userId              String?
+  model               String
+  operation           AiUsageOperation
+  inputTokens         Int?
+  outputTokens        Int?
+  totalTokens         Int?
+  cachedTokens        Int?
+  estimatedInputCost  Float?
+  estimatedOutputCost Float?
+  estimatedTotalCost  Float?
+  currency            String           @default("USD")
+  status              AiUsageStatus    @default(SUCCESS)
+  createdAt           DateTime         @default(now())
+
+  user                User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([operation])
+  @@index([model])
 }

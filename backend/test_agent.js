@@ -20,6 +20,13 @@ genai.GoogleGenAI = class MockGoogleGenAI {
         }
         const response = mockResponses[mockCallCount++];
         if (response instanceof Error) throw response;
+        
+        response.usageMetadata = {
+          promptTokenCount: 200,
+          candidatesTokenCount: 100,
+          totalTokenCount: 300
+        };
+        
         return response;
       }
     };

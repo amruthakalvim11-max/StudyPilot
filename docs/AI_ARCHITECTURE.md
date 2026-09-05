@@ -21,8 +21,14 @@ This guarantees that:
 - Prompts are strictly controlled and engineered server-side.
 - Internal System Instructions cannot be modified or bypassed by a malicious frontend user.
 
-## 6. Evaluation Framework (Phase 4A)
-To prevent prompt drift and regression, an automated Evaluation Framework (`backend/evals/`) tests the complete system lifecycle against a versioned dataset (`dataset.v1.json`). It enforces strict security thresholds deterministically without relying on an unstable LLM-as-judge. See [AI_EVALUATION.md](./AI_EVALUATION.md) for details.
+## 5. Automated Evaluation Framework
+
+The AI Evaluation module (`backend/evals/`) continuously assesses model outputs against rigid semantic and security constraints. See [AI Evaluation](./AI_EVALUATION.md) for testing schemas, prompt injection detection, and regression thresholds.
+
+## 6. AI Usage & Cost Monitoring
+
+The Centralized Monitoring layer (`ai.usage.service.js`) captures and correlates API `usageMetadata` (input, output, and cached tokens) from `@google/genai` against the official pricing schema (`ai-pricing.js`). 
+See [AI Usage Monitoring](./AI_USAGE_MONITORING.md) for telemetry details.
 
 ## 5. Prompt Engineering
 We employ a **System Instruction** model where the "StudyPilot Tutor" persona is explicitly defined. The system prompt instructs the AI to *never* output raw answers or complete assignments on behalf of the student, but instead provide structured guidance.

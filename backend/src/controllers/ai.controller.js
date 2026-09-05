@@ -81,3 +81,19 @@ exports.askAiStream = async (req, res, next) => {
     }
   }
 };
+
+/**
+ * Retrieves usage and cost metadata for the current user
+ * @route GET /api/ai/usage
+ * @access Private
+ */
+exports.getUsage = async (req, res, next) => {
+  try {
+    const aiUsageService = require('../services/ai.usage.service');
+    const summary = await aiUsageService.getUsageSummary(req.user.id);
+    res.json({ success: true, data: summary || { error: 'No usage found' } });
+  } catch (error) {
+    console.error('Error retrieving AI usage summary:', error);
+    res.status(500).json({ success: false, error: { message: 'Failed to retrieve AI usage metrics' } });
+  }
+};
