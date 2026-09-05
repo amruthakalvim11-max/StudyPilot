@@ -11,6 +11,7 @@ This document maps the project rubric requirements to their specific implementat
 | **File upload handling** | [PASS] Store files via `multer` securely, validate MIME type and 10MB limit | `backend/src/routes/material.routes.js` | Show the upload test or code |
 | **HTTP status codes used correctly** | [PASS] Return 200, 201, 400, 401, 403, 404, 409, 429, 500 | `backend/src/controllers/auth.controller.js` | Automated API tests output |
 | **Middleware** | [PASS] Zod validation, JWT verification, RBAC | `backend/src/middleware/authMiddleware.js`, `errorHandler.js` | Send invalid POST request to trigger 400 or missing token for 401 |
+| **LLM evaluation sets** | [PASS] Ground truth datasets and automated evals | `backend/tests/evals/` | Run the evaluation suite |
 | **Problem modeling** | [PASS] ERD design and DB documentation | `docs/DATABASE_DESIGN.md` | Show documentation |
 | **RESTful endpoint design** | [PASS] Resource-based URLs, appropriate HTTP methods | `backend/src/routes/*.js` | Show API routes (`GET /api/courses`, etc.) |
 | **Server-side error handling** | [PASS] Centralized error handler, consistent JSON format | `backend/src/middleware/errorHandler.js` | Trigger a server error and check JSON |

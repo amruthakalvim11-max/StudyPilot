@@ -21,6 +21,9 @@ This guarantees that:
 - Prompts are strictly controlled and engineered server-side.
 - Internal System Instructions cannot be modified or bypassed by a malicious frontend user.
 
+## 6. Evaluation Framework (Phase 4A)
+To prevent prompt drift and regression, an automated Evaluation Framework (`backend/evals/`) tests the complete system lifecycle against a versioned dataset (`dataset.v1.json`). It enforces strict security thresholds deterministically without relying on an unstable LLM-as-judge. See [AI_EVALUATION.md](./AI_EVALUATION.md) for details.
+
 ## 5. Prompt Engineering
 We employ a **System Instruction** model where the "StudyPilot Tutor" persona is explicitly defined. The system prompt instructs the AI to *never* output raw answers or complete assignments on behalf of the student, but instead provide structured guidance.
 The user's individual context (`name`, `role`) is dynamically injected into each request context so the Tutor can personalize its advice.
