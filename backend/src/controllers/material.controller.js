@@ -43,22 +43,24 @@ exports.uploadMaterial = async (req, res, next) => {
       const chunks = chunkingService.chunkText(text, material.id);
 
       // 5. Generate Embeddings & Store Chunks
-      const chunkRecords = [];
+      let chunksGenerated = 0;
       for (const chunk of chunks) {
-        // We get the embedding, but per instructions we do NOT store it as JSON
         const embedding = await embeddingService.generateEmbedding(chunk.text, isMock);
+        // Format embedding as a string representation of array for pgvector casting '[1,2,3]'
+        const embeddingString = `[${embedding.join(',')}]`;
         
-        chunkRecords.push({
-          materialId: chunk.materialId,
-          chunkIndex: chunk.chunkIndex,
-          text: chunk.text,
-          page: chunk.page
-        });
-      }
-
-      // Save chunks to DB
-      if (chunkRecords.length > 0) {
-        await prisma.documentChunk.createMany({ data: chunkRecords });
+        await prisma.$executeRaw`
+          INSERT INTO "DocumentChunk" (id, "materialId", "chunkIndex", text, page, embedding)
+          VALUES (
+            gen_random_uuid(),
+            ${chunk.materialId},
+            ${chunk.chunkIndex},
+            ${chunk.text},
+            ${chunk.page || null},
+            ${embeddingString}::vector
+          )
+        `;
+        chunksGenerated++;
       }
 
       // 6. Mark READY
@@ -76,7 +78,7 @@ exports.uploadMaterial = async (req, res, next) => {
           id: material.id,
           originalFilename: material.originalFilename,
           processingStatus: 'READY',
-          chunksGenerated: chunkRecords.length
+          chunksGenerated: chunksGenerated
         }
       });
 

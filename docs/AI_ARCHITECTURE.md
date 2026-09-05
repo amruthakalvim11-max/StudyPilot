@@ -24,8 +24,10 @@ Instead of relying on fragile string parsing, we configure the `responseMimeType
 - An aggressive Rate Limiter (20 requests per 15 minutes per user) is enforced via Redis on the AI routes.
 - Zod is used to validate the incoming user prompt to ensure it is not too short or excessively long (max 2000 characters).
 
-## 7. RAG & Embeddings Pipeline (Phase 3B - Ingestion)
+## 7. RAG & Embeddings Pipeline (Phase 3B - Complete)
 - **Model**: `text-embedding-004` (Google Gemini) via `@google/genai`.
+- **Vector Storage**: Stored securely as `vector(768)` in PostgreSQL leveraging the `pgvector` extension.
 - **Chunking**: Text is chunked with `CHUNK_SIZE = 1000` and `CHUNK_OVERLAP = 200`.
-- **PGVector Status**: The system currently runs `postgresql@16` locally which blocked the installation of the `pgvector` extension. The pipeline securely extracts text and generates embeddings, but **semantic retrieval is currently blocked**.
-- **Mocking**: Embeddings can be fully mocked via the `X-Test-Mock-AI: true` header to save API costs during test execution.
+- **Retrieval Metric**: Cosine Distance (`<=>`) is evaluated directly in the database.
+- **Isolation & Defense**: Context retrieval strictly enforces ownership isolation via SQL JOINs. Retrieved data is bounded by XML tags in the prompt and isolated via explicit system instruction constraints.
+- **Mocking**: Embeddings and inference can be fully mocked via the `X-Test-Mock-AI: true` header to save API costs during test execution.

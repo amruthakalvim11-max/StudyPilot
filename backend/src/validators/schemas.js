@@ -18,7 +18,8 @@ const loginSchema = z.object({
 
 const aiAskSchema = z.object({
   body: z.object({
-    prompt: z.string().min(2, 'Prompt must be at least 2 characters').max(2000, 'Prompt is too long (max 2000 chars)')
+    prompt: z.string().min(2, 'Prompt must be at least 2 characters').max(2000, 'Prompt is too long (max 2000 chars)'),
+    materialIds: z.array(z.string().uuid('Invalid material ID')).optional()
   })
 });
 

@@ -1,9 +1,10 @@
 const aiService = require('../services/ai.service');
+const ragService = require('../services/rag.service');
 const prisma = require('../config/prisma');
 
 exports.askAi = async (req, res, next) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, materialIds } = req.body;
     
     // Check if test header is present to use mock mode
     const isMock = req.headers['x-test-mock-ai'] === 'true';
@@ -14,7 +15,17 @@ exports.askAi = async (req, res, next) => {
       select: { name: true, role: true }
     });
 
-    const result = await aiService.askTutor(prompt, user, isMock);
+    let contextChunks = [];
+    if (materialIds && materialIds.length > 0) {
+      contextChunks = await ragService.retrieveRelevantChunks({
+        userId: req.user.id,
+        query: prompt,
+        materialIds,
+        useMock: isMock
+      });
+    }
+
+    const result = await aiService.askTutor(prompt, user, contextChunks, isMock);
 
     res.json({
       success: true,
